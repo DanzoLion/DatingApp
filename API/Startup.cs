@@ -35,6 +35,9 @@ namespace API
                 options.UseSqlite(_config.GetConnectionString("DefaultConnection"));                        // connection string is what we are passing to our sql database as a connection string
             });
             services.AddControllers();
+            services.AddCors();                                                                                                             // we add this method to allow CORS communication between different origin ports
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -53,6 +56,8 @@ namespace API
             app.UseHttpsRedirection();                                                                                                                              // from http to https endpoint if entering on http
 
             app.UseRouting();                                                                                                                                              // our router to route from url to controller
+
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));            // acts as middleware to allow CORS routing of differing originating ports // x is our implented CORS policy
 
             app.UseAuthorization();                                                                                                                                      // authorisation implementation
 

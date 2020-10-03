@@ -5,7 +5,7 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": ".NET Core Launch (web)",
+            "name": ".NET Core Launch (web)",                                                                   // we can start our debugger here if it is not already running
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -27,7 +27,7 @@
             }
         },
         {
-            "name": ".NET Core Attach",
+            "name": ".NET Core Attach",                                                                                 // we can launch the debugger to an already running process
             "type": "coreclr",
             "request": "attach",
             "processId": "${command:pickProcess}"

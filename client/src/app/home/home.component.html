@@ -1,0 +1,20 @@
+<div class="container mt-5">
+<div *ngIf="!registerMode" style="text-align: center;">
+
+<h1>Find Your Match</h1>
+<p class="lead">Come inside to view your matches .. all you need to do is sign up!</p>
+<div class="text-center">
+    <button (click)="registerToggle()" class="btn btn-primary btn-lg mr-2">Register</button>                                       
+    <button class="btn btn-info btn-lg">Learn More</button>
+</div>
+</div>
+
+<div *ngIf="registerMode" class="container">
+    <div class="row justify-content-center">
+        <div class="col-4">                                                                               <!-- cancelRegister is output for our emit function // will receive event from our child.component-->
+            <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>   <!-- removed: <p>Register Form Goes Here</p>  // passing component here using [] //users = property inside home component -->
+        </div>
+    </div>
+</div>
+
+</div>

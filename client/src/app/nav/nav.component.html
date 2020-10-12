@@ -1,25 +1,27 @@
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
 
     <div class="container">
-    <a class="navbar-brand" href="#">Dating Application</a>
+    <a class="navbar-brand" routerLink="/">Dating Application</a>                             <!-- routerLink added for href: takes us to our home component -->
 
 
-      <ul class="navbar-nav mr-auto" *ngIf = "accountService.currentUser$ | async">        <!-- // removed "loggedIn" will display our conditional NavBar components if logged in  -->
-        <li class="nav-item">
-          <a class="nav-link" href="#">Matches</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Lists</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Messages</a>
-        </li>
+      <ul class="navbar-nav mr-auto"  >        <!-- // removed "loggedIn" will display our conditional NavBar components if logged in  -->  <!-- removed: *ngIf = "accountService.currentUser$ | async" -->
 
+        <ng-container  *ngIf = "accountService.currentUser$ | async" >     <!-- added: ng-container, does not interfere with any html and does not interfere with any styling especially when using conditionals is generated as a comment instead -->
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/members" routerLinkActive="active">Matches</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/lists" routerLinkActive="active">Lists</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a>
+          </li>
+        </ng-container>
         
       </ul>                                                                                                                  <!-- () brackets means from template to component  [] brackets receiving from component [()] is two way binding // banana in a box-->
 
-<div class="dropdown" *ngIf="accountService.currentUser$ | async" dropdown>                           <!-- angular bootstrap will be required for implementation here // dropdown added -->
-<a class="dropdown-toggle text-light" dropdownToggle>Welcome User</a> <!-- structural directive dropdownToggle added here -->
+<div class="dropdown" *ngIf="(accountService.currentUser$ | async) as user" dropdown>                           <!-- angular bootstrap will be required for implementation here // dropdown added  // added: () as user-->
+<a class="dropdown-toggle text-light" dropdownToggle>Welcome {{ user.username | titlecase }}</a> <!-- structural directive dropdownToggle added here // added interpolation {{user.username}} -->
 <div class="dropdown-menu mt-3" *dropdownMenu>                       <!-- structural directive dropdown menu added here -->
 
         <a class="dropdown-item">Edit Profile</a> 
@@ -45,7 +47,7 @@
         class="form-control mr-sm-2" 
         type="password" 
         placeholder="Password" >
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>                                               <!-- means whenever we hit "submit" login() function will be called -->
+        <button class="btn btn-success my-2 my-sm-0" type="submit">Login</button>                                               <!-- means whenever we hit "submit" login() function will be called -->
       </form>
     </div>
 

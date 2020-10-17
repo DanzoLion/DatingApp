@@ -13,10 +13,7 @@ import { AccountService } from '../_services/account.service';    // AccountServ
 export class NavComponent implements OnInit {
 model: any = {}
                                                                                                           // currentUser$: Observable<User>; //account service already has this as a property in useage so this can be removed      //removed: loggedIn: boolean;
-
-
-
-  constructor(public accountService: AccountService, private router: Router, private toastr: ToastrService) { }  // toastr added // needs to become public so we can access the service within our template       // here we inject our service into this component
+ constructor(public accountService: AccountService, private router: Router, private toastr: ToastrService) { }  // toastr added // needs to become public so we can access the service within our template       // here we inject our service into this component
 
   ngOnInit(): void {
                                                                                                                                              // this.currentUser$ = this.accountService.currentUser$;  //removed:  this.getCurrentUser();   // retrieves the current user from the account service
@@ -26,11 +23,10 @@ login() {
   this.accountService.login(this.model).subscribe(response => {                    // here we use our account service to login //observable provided here, lazy so we need to subscribe
   this.router.navigateByUrl("/members");                                                       //removed: console.log(response); // replaced with ("/members") to route to members area
                                                                                                                       // removed:  this.loggedIn = true;              // we have a defined logged in variable
-  }, error => {                                                                                                 // http response will be contained inside error here
+  },/* error => {                                                                                                 // http response will be contained inside error here
     console.log(error);
     this.toastr.error(error.error);                                                                              // this informs of error from API server, the error message is contained inside error property here // will provide the reason the error failed
-  })                                                                                         
-}
+  }*/)}
 
 logout()
 {

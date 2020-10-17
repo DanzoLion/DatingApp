@@ -19,6 +19,7 @@ using API.Services;     // TokenService
 using Microsoft.AspNetCore.Authentication.JwtBearer;                // installed from mocrosoft.aspnetcore.authentication.jwtbearer // JwtBearerDefaults
 using Microsoft.IdentityModel.Tokens;                                          // TokenValidationParameters
 using API.Extensions;                                                       // AddAppicationServices class we created earlier to manage our static extension method
+using API.Middleware;                                                   //            app.UseMiddleware<ExceptionMiddleware>();
 
 namespace API
 {
@@ -38,7 +39,7 @@ namespace API
             services.AddApplicationServices(_config);                                                                                                   // after refactor, our services are now all contained inside this class
             services.AddControllers();
             services.AddCors();                                                                                                                                      // we add this method to allow CORS communication between different origin ports
-           services.AddIdentityServices(_config);                                                                                                        // after refactor, our services are now all contained inside this class
+            services.AddIdentityServices(_config);                                                                                                        // after refactor, our services are now all contained inside this class
 
             services.AddSwaggerGen(c =>
             {
@@ -47,18 +48,21 @@ namespace API
         }
                                                                                                                                                                                  // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
+        {       // removed as we have added middleware -ExceptionMiddleware.cs
+            /*if (env.IsDevelopment())                                                                                                                            // middleware exception always come at top of middleware container
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();                                                                                                        // exception gets thrown to our output dev. page here
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
-            }
-                                                                                                //NB Sequential Ordering of methods is important here!!
+            }*/
+                                                                                                //NB Sequential Ordering of methods is important here!
+
+            app.UseMiddleware<ExceptionMiddleware>();
+
             app.UseHttpsRedirection();                                                                                                                              // from http to https endpoint if entering on http
             app.UseRouting();                                                                                                                                              // our router to route from url to controller
             app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));            // acts as middleware to allow CORS routing of differing originating ports // x is our implented CORS policy
-           app.UseAuthentication();                                                                                                                                 // after we implement our configuration for middleware authentication
+            app.UseAuthentication();                                                                                                                                 // after we implement our configuration for middleware authentication
             app.UseAuthorization();                                                                                                                                      // authorisation implementation
             app.UseEndpoints(endpoints =>                                                                                                                    // middleware to use endpoints
             {

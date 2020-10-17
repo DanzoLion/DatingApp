@@ -18,6 +18,11 @@
           </li>
         </ng-container>
         
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/errors" routerLinkActive="active">Errors</a>         <!-- link required after test-errors.component.ts + html + app-routing.module.ts route -->
+        </li>
+
+
       </ul>                                                                                                                  <!-- () brackets means from template to component  [] brackets receiving from component [()] is two way binding // banana in a box-->
 
 <div class="dropdown" *ngIf="(accountService.currentUser$ | async) as user" dropdown>                           <!-- angular bootstrap will be required for implementation here // dropdown added  // added: () as user-->

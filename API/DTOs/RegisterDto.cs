@@ -8,6 +8,7 @@ namespace API.DTOs
         public string Username { get; set; }
 
         [Required]
-        public string Password { get; set; }                    
+        [StringLength(8, MinimumLength = 4)]                // additional validator added here so that we see responses when we hit this particular method // after createing BuggyController.cs 
+         public string Password { get; set;}//   public string Password { get; set; }                    
     }
 }

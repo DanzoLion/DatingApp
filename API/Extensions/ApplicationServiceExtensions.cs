@@ -1,6 +1,8 @@
 using API.Data; //DataContext
+using API.Helpers;  //AddAutoMapper()
 using API.Interfaces;   // ITokenService
 using API.Services; //TokenService
+using AutoMapper; //AutoMapperProfiles
 using Microsoft.EntityFrameworkCore;    //UseSqlite
 using Microsoft.Extensions.Configuration;   // IConfig
 using Microsoft.Extensions.DependencyInjection; // IServiceCollection
@@ -12,7 +14,9 @@ namespace API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)     // where we extend IServiceCollection in Startup.cs // AddApplicationServices is the name of the method we will be using // to extend use this
         {
                 services.AddScoped<ITokenService, TokenService>();                                                                             // added interface scoped to keep alive with HTTP req. for creating Token service
-            services.AddDbContext<DataContext>(options =>                                                                               // lambda expression to pass expression as parameter
+                services.AddScoped<IUserRepository, UserRepository>();                                                                      // Adds user repository to AddScoped implementation // added after UserRepository.cs created
+                services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);                                                    // added service from AutoMapperProfiles.cs
+                services.AddDbContext<DataContext>(options =>                                                                               // lambda expression to pass expression as parameter
             {
                 options.UseSqlite(config.GetConnectionString("DefaultConnection"));                                            // connection string is what we are passing to our sql database as a connection string
             });

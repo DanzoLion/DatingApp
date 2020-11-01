@@ -2,13 +2,16 @@ import { HttpClient } from '@angular/common/http';      // HttpClient
 import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators'; // use within pipe() rxjs operator
+import { environment } from 'src/environments/environment';
 import { User } from '../_models/user'; // response: User
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
-  baseUrl = 'https://localhost:5001/api/';                    // baseUrl - used to make requests to our API / keeps app alive as long as it's kept open, or not moved away from
+  //baseUrl = 'https://localhost:5001/api/';                    // baseUrl - used to make requests to our API / keeps app alive as long as it's kept open, or not moved away from
+    // baseUrl - used to make requests to our API / keeps app alive as long as it's kept open, or not moved away from
+  baseUrl = environment.apiUrl;            // aungular auto-imports this from environment.ts      
                                                                                         // ReplaySubject<User>(1); single value stored, and type of value is User (1) is also the size of our buffer
   private currentUserSource = new ReplaySubject<User>(1);     // observable created here to store our user in // ReplaySubject stores values inside here and emits last value subscribed // or number of values we want to emit
   currentUser$ = this.currentUserSource.asObservable();

@@ -1,0 +1,37 @@
+.card:hover img {                                                      /* we add a card and add functionality when we hover over */                                         
+    transform: scale(1.2, 1.2);                                     /*  increases image size and makes it zoom */
+    transition-duration:  500ms;
+    transition-timing-function: ease-out;
+    opacity: 0.7;                                                           /*  fade in/fade out option */
+
+}
+
+.card img{                                                                 /*  */
+    transform: scale(1.0, 1.0);                                     /*  here we return the card img to its normal sizing */
+    transition-duration:  500ms;
+    transition-timing-function: ease-out;
+}
+
+.card-img-wrapper {                                                 /*     card-img-wrapper in member-card-component.html*/
+    overflow: hidden;
+    position: relative;
+}
+
+.member-icons {
+    position: absolute;
+    bottom: -30%;
+    left: 0;
+    right: 0;
+    margin-right: auto;
+    margin-left: auto;
+    opacity: 0;
+}
+
+.card-img-wrapper:hover .member-icons {             /* NB must have a space after hover .member-icons */
+    bottom: 0;
+    opacity: 1;
+}
+
+.animate {
+    transition: all 0.3s ease-in-out;
+}

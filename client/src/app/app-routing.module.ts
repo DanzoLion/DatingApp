@@ -19,7 +19,8 @@ const routes: Routes = [
     canActivate: [AuthGuard],                                                                                                       // protects children
     children: [                                                                                                                             // will be an array of our route // all of our children are now covered by our AuthGuard above
       {path: "members", component: MemberListComponent, canActivate: [AuthGuard]},           // specify AuthGuard array [1 member] - after completing authGuard // route guard now active
-      {path: "members/:id", component: MemberDetailComponent},                                              // is the id of our member
+     // {path: "members/:id", component: MemberDetailComponent},                                              // is the id of our member
+      {path: "members/:username", component: MemberDetailComponent},                                              // changed id to username to decide which route the have gone to we access the username from route parameters
       {path: "lists", component: ListsComponent},                                                                         // is the id of our member
       {path: "messages", component: MessagesComponent},                                              // all these items moved to children array/list
     ]
@@ -27,7 +28,7 @@ const routes: Routes = [
      {path: "errors", component: TestErrorsComponent},                                                     // we add TestErrorsComponent after we have created the test-errors components.ts + html files from command line and coded these
      {path: "not-found", component: NotFoundComponent},                                                     // create this link after setting up not-found.component.html
      {path: "server-error", component: ServerErrorComponent},                                                     // create this link after setting up server-error.component.html
-     {path: "**", component: NotFoundComponent, pathMatch: "full"},    // ** wildcard route where user types in something that doesn't match anything in our config. //full redirects to home component based on member //changed: from HomeComponent -> NotFoundComponent
+     {path: "**", component: NotFoundComponent, pathMatch: "full"},                                // ** wildcard route where user types in something that doesn't match anything in our config. //full redirects to home component based on member //changed: from HomeComponent -> NotFoundComponent
   
 ];
 

@@ -6,9 +6,11 @@ import { TestErrorsComponent } from './errors/test-errors/test-errors.component'
 import { HomeComponent } from './home/home.component';
 import { ListsComponent } from './lists/lists.component';
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberListComponent } from './members/member-list/member-list.component';
 import { MessagesComponent } from './messages/messages.component';
 import { AuthGuard } from './_guards/auth.guard';
+import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
 
 const routes: Routes = [
   {path: "", component: HomeComponent},                                                                                         // empty string represents the path :4200; that is our home component
@@ -18,11 +20,13 @@ const routes: Routes = [
     runGuardsAndResolvers: "always",                                                                                          // decides when guards and resolvers will be run
     canActivate: [AuthGuard],                                                                                                       // protects children
     children: [                                                                                                                             // will be an array of our route // all of our children are now covered by our AuthGuard above
-      {path: "members", component: MemberListComponent, canActivate: [AuthGuard]},           // specify AuthGuard array [1 member] - after completing authGuard // route guard now active
-     // {path: "members/:id", component: MemberDetailComponent},                                              // is the id of our member
-      {path: "members/:username", component: MemberDetailComponent},                                              // changed id to username to decide which route the have gone to we access the username from route parameters
-      {path: "lists", component: ListsComponent},                                                                         // is the id of our member
-      {path: "messages", component: MessagesComponent},                                              // all these items moved to children array/list
+      //{path: "members", component: MemberListComponent}, // removed:  canActivate: [AuthGuard]},           // specify AuthGuard array [1 member] - after completing authGuard // route guard now active
+      {path: "members", component: MemberListComponent,},           // specify AuthGuard array [1 member] - after completing authGuard // route guard now active
+      {path: "members/:username", component: MemberDetailComponent,},                                              // changed id to username to decide which route the have gone to we access the username from route parameters
+      {path: "member/edit", component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard],},           // added after generating ng g c member-edit component for routing // added new guard [PreventUnsavedChangesGuard] after creating prevent-unsaved-changes.guard.ts
+    // {path: "members/:id", component: MemberDetailComponent},     // is the id of our member
+      {path: "lists", component: ListsComponent,},                                                                         // is the id of our member
+      {path: "messages", component: MessagesComponent,},                                              // all these items moved to children array/list
     ]
   },
      {path: "errors", component: TestErrorsComponent},                                                     // we add TestErrorsComponent after we have created the test-errors components.ts + html files from command line and coded these

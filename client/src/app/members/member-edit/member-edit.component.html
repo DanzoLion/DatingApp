@@ -1,0 +1,54 @@
+<!--<h1 *ngIf="member">member.knownAs</h1>  removed -->  
+<div class="row" *ngIf="member">
+
+    <div class="col-4"><h1>Your Profile</h1></div>
+
+<div class="col-8">
+    <div class="alert alert-info" *ngIf="editForm.dirty"> <!--*ngIf="editForm.dirty" / only displays the alert information of form if it has typeing changes made to it -->
+        <strong>Information: </strong>You Made Changes .. any unsaved changes will be lost
+    </div>
+</div>
+
+    <div class="col-4">
+    <div class="card">
+            <img src="{{member.photoUrl || './assets/user.png' }}" alt="{{member.knownAs}}" class="card-img-top img-thumbnail">         <!-- || used here as an alternative so users can upload profile/photo later on-->
+            <div class="card-body">
+                <div><strong>Location:</strong><p>{{member.city}},{{member.country}}</p></div>
+                <div><strong>Age:</strong><p>{{member.age}}</p></div>
+                <div><strong>Last Active:</strong><p>{{member.lastActive}}</p></div>
+                <div><strong>Member Since:</strong><p>{{member.created}}</p></div>
+                </div>
+                <div class="card-footer"></div>
+                <!-- <div class="btn-group d-flex"></div>             here we use the css flex box system-->
+               <!--<button class="btn btn-primary">Like</button>-->
+                <button [disabled]="!editForm.dirty" form="editForm" type="submit" class="btn btn-success btn-block">Save Changes</button> 
+                <!-- added btn-block / added form="editForm to link button for form" / [disabled="!editForm.dirty" - this disables the save button if no typing has been made]-->
+        </div>
+    </div>
+    <div class="col-8">
+
+        <tabset class="member-tabset">
+            <tab heading='About {{member.knownAs}}'>
+                                            <form #editForm="ngForm" id="editForm" (ngSubmit)="updateMember()">   <!-- id="editForm added to link form to button" -->
+<!-- # is a template reference variable / we need to create a method inside the component to set some data / (ngSubmit="updateMember()" created after method created in member-edit.component.ts)-->
+                                                <h4 class="mt-2">Description</h4><textarea class="form-control" [(ngModel)]="member.introduction" name="introduction"  rows="6"></textarea> <!-- introduction comes from member.introduction-->
+                                                <h4 class="mt-2">Looking for</h4><textarea class="form-control" [(ngModel)]="member.lookingFor" name="lookingFor"  rows="6"></textarea>
+                                                <h4 class="mt-2">Interests</h4><textarea class="form-control" [(ngModel)]="member.interests" name="interests"  rows="6"></textarea>
+                                                <h4 class="mt-2">Location Details: </h4>
+                                                <div class="form-inline">
+                                                    <label for="city">City: </label>
+                                                    <input [(ngModel)]="member.city" type="text" name="city" class="form-control mx-2">
+                                                    <label for="city">Country: </label>
+                                                    <input [(ngModel)]="member.country" type="text" name="country" class="form-control mx-2">
+                                                </div>
+                                            </form>
+                                    </tab>
+            <tab heading='Edit Photos'><p>Photo Edits Go Here</tab>
+            <!-- <tab heading='Photos'><ngx-gallery [options]="galleryOptions" [images]="galleryImages" style="display: inline-block; margin-bottom: 20px;"></ngx-gallery></tab> <!--added once we have coded member-detail.component.ts-->
+            <!--<tab heading='Messages'><p>Messages will go here</p></tab> -->
+        
+
+        </tabset>
+
+    </div>
+</div>

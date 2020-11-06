@@ -1,3 +1,4 @@
+using System.Security.Claims;         // claim types
 using System;
 using System.Collections.Generic;                                                                               // <IEnumerable> // allows simple iteration over a collection type <List> can be used but has more features than simple <IEnumerable>
 using System.Linq;                                                                                                       // ToList() -> we are getting our data from database and converting into list
@@ -60,8 +61,25 @@ namespace API.Controllers {
         //var user = await _userRepository.GetUserByUsernameAsync(username);      // AutoMember no takes care of automapping between our AppUser and MemberDto // changed when implementing new _mapper in UserRepository.cs
        return await _userRepository.GetMemberAsync(username);      // AutoMember no takes care of automapping between our AppUser and MemberDto
        // return _mapper.Map<MemberDto>(user);                    // returns memberDto // also returns user         // removed after adding .GetMemberAsync(username) as we are implementing new _mapper implementation 
-
         }
 
+      // method added here .. what is relevant is the method / parameters / route used // in this case HttpPut is the only Put method and it is unique and all we need
+      [HttpPut] // HttpPut is the resource/method we use to alter/make changes/resource on a server
+      public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)   // our method // returns action result // don't need to send data back as client has all data we have for entity we are creating here
+      {
+           // what do we want to do when we update a Dto?  We need the user and username
+           // we are getting the username from what we are authenticating against, ie against the token
+           //FindFirst() is the claims principle of the user .. inside a controller we have access to it here // contains information about their identity
+           // we are matching the name identifier, the identifier given to the name that matches the name/identifier in their token
+           var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // should provide token of the user form username // this is the user we are updating
+           var user = await _userRepository.GetUserByUsernameAsync(username); // once we have user we use the user repository and user by user async
+           _mapper.Map(memberUpdateDto, user);  // we map the user to Dto here
+           _userRepository.Update(user);  // here the user object is flagged as being updated by entity framework // guarantees we don't get an error or exception
+
+           if (await _userRepository.SaveAllAsync()) return NoContent();    // no content sent back here and saves if successful
+
+           return BadRequest("Failed to update user");  // if not _userRepository .. return BadRequest
+
+      }
     }
 }

@@ -1,5 +1,5 @@
 <div class="row">
-    <div *ngFor="let member of members" class="col-2">                                                                             <!-- each user will occupy two columns on the page -->
+    <div *ngFor="let member of members$ | async" class="col-2">                                                                             <!-- each user will occupy two columns on the page -->
         <app-member-card [member]="member"> </app-member-card>                                                        <!-- [member] is input property -->
 
 

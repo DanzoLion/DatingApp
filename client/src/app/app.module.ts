@@ -22,6 +22,9 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { MemberCardComponent } from './members/member-card/member-card.component';
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 
 
 
@@ -38,7 +41,8 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
     TestErrorsComponent,
     NotFoundComponent,
     ServerErrorComponent,
-    MemberCardComponent
+    MemberCardComponent,
+    MemberEditComponent
   ],
   imports: [
     BrowserModule,
@@ -46,13 +50,15 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
     HttpClientModule,
     BrowserAnimationsModule,
    FormsModule,
-   SharedModule,                                            // imported here after we create shared.module.ts and moved our modules from here to shared.module.ts
+   SharedModule,
+   NgxSpinnerModule,                                            // imported here after we create shared.module.ts and moved our modules from here to shared.module.ts
      ],
 
 
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},     //  multi: true .. where we use this to add our interceptor not replace, add // we can also have multiple interceptors
-    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}     //  after creating and modifying jwt.interceptor.ts we add it here JwtInterceptor as a class
+    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},     //  after creating and modifying jwt.interceptor.ts we add it here JwtInterceptor as a class
+    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}     //  after creating and modifying loading.interceptor.ts
   ],
   bootstrap: [AppComponent]
 })

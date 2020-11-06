@@ -29,8 +29,8 @@
 <a class="dropdown-toggle text-light" dropdownToggle>Welcome {{ user.username | titlecase }}</a> <!-- structural directive dropdownToggle added here // added interpolation {{user.username}} -->
 <div class="dropdown-menu mt-3" *dropdownMenu>                       <!-- structural directive dropdown menu added here -->
 
-        <a class="dropdown-item">Edit Profile</a> 
-
+  <!--<a class="dropdown-item">Edit Profile</a>  addeed when we created edit profile component to finish the link--> 
+        <a routerLink='/member/edit' class="dropdown-item">Edit Profile</a>
     <div class="dropdown-divider"> </div>                          <!-- added -->
 
     <a class="dropdown-item" (click)="logout()">Logout</a> 

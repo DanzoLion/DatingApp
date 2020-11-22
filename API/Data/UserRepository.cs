@@ -9,9 +9,11 @@ using System.Linq;
 using AutoMapper.QueryableExtensions;
 using AutoMapper;                   // IMapper
 
+
 namespace API.Data
 {
     public class UserRepository : IUserRepository // implement interface from IUserRepository for AutoFill
+
     {
         private readonly DataContext _context;          // we need a _context field/variable/parameter/argument for context
         private readonly IMapper _mapper;               // initialised after injecting IMapper mapper
@@ -30,13 +32,12 @@ namespace API.Data
             //   .Select(user => new MemberDto                    // within the select statement we maually map the properties we need from our database // that we put inside and return from our MemberDto
             // Id = user.Id,
             //    UserName = user.UserName 
-
         }
 
         public async Task<IEnumerable<MemberDto>> GetMembersAsync() // implemented interface from IsuerRepository.cs // need to change this to async after adjusting this Task
         {
            return await _context.Users
-           .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)         // ProjectTo selects all of users
+           .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)                     // ProjectTo selects all of users
            .ToListAsync();                                                                                           // this will execute the database query
         }
 

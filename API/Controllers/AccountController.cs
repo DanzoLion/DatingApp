@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;                                                             // imported for encoding
 using System.Security.Cryptography;
 using System.Threading.Tasks;                                       // importing Task
@@ -46,7 +47,9 @@ namespace API.Controllers {
         [HttpPost("login")]                                                                                                                                      //login endpoint created here // sends values in body of request using Httppost // method called login
         public async Task<ActionResult<UserDto>>Login(LoginDto loginDto)                                                //return an action result and return AppUser to reflect user successfully logged in // Dto contains username+password but we want a unique Dto
         {                                                                                                                                                                // we then add the login for what we need inside this method // HttpPost Endpoint
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == loginDto.Username);          // we retrieve a user from our database via specific retrieve method // either found a user or not
+            var user = await _context.Users
+            .Include(p => p.Photos)                                                                                                     // photo included so our users photo is not empty  // eagerly loaded photos here
+            .SingleOrDefaultAsync(x => x.UserName == loginDto.Username);          // we retrieve a user from our database via specific retrieve method // either found a user or not
             if (user == null)   return Unauthorized("Invalid Username");                                                            // if not found, return Unauthorised .. "Invalid Username"
              using var hmac = new HMACSHA512(user.PasswordSalt);                                                              // checks our HMACSHA // if found // does reverse calculation of registration // default constructor uses random Key
                                                                                                                                                                 // key passed into HMACSHA512() is the password salt
@@ -59,7 +62,8 @@ namespace API.Controllers {
             return new UserDto                                                                                                                 // this completes our register method  // implementing new UserDto instead of AppUser
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)                                                                         // token is our token service, and we pass user as a parameter              // we then need to specify config properties for user
+                Token = _tokenService.CreateToken(user),                                                                         // token is our token service, and we pass user as a parameter              // we then need to specify config properties for user
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url                                               // this property is addd in UserDto.cs .. and contains our Main Photo // exception will occur if no photo to work with, not NULL
             };                                                                                                                                              // hits here once the password has successfully been calculated and returns user object                   
         }                                                                                                                                        
 

@@ -43,10 +43,13 @@
                                                 </div>
                                             </form>
                                     </tab>
-            <tab heading='Edit Photos'><p>Photo Edits Go Here</tab>
+            <tab heading='Edit Photos'>
+                
+                <!-- <p>Photo Edits Go Here</tab>  // this is removed and replaced with app-photo-editor below, after we create photo-editor.component suite -->
+                    <app-photo-editor [member]="member"></app-photo-editor>
             <!-- <tab heading='Photos'><ngx-gallery [options]="galleryOptions" [images]="galleryImages" style="display: inline-block; margin-bottom: 20px;"></ngx-gallery></tab> <!--added once we have coded member-detail.component.ts-->
             <!--<tab heading='Messages'><p>Messages will go here</p></tab> -->
-        
+        </tab>
 
         </tabset>
 

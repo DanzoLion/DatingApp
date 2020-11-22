@@ -1,3 +1,9 @@
 .dropdown-toggle, .dropdown-item {
     cursor: pointer;
 }
+
+img {                                                                                           /* .img denotes class // img is reference ot the html tag only directly */
+    max-height: 50px;
+    border: 2px solid #fff;
+    display: inline;
+}

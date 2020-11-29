@@ -18,6 +18,7 @@ namespace API.Helpers
             CreateMap<Photo, PhotoDto>();               // mapping from photo to photoDto
                                                                     // this is added as a dependency we need to inject so we need to add this to our ApplicationServiceExtensions.cs
             CreateMap<MemberUpdateDto, AppUser>();    // going from MemberUpdateDto, to AppUser // user .ReverseMap to swap directions
+            CreateMap<RegisterDto, AppUser>();                  // maps from RegisterDto -> to AppUser          // we now don't need to manually map our properties we receive from our account controller    
         }
     }
 }

@@ -1,0 +1,18 @@
+<div class="form-group">
+
+    <!--  here we add a few properties we get from our datepicker // date-input.component.ts -->
+    <input 
+    type="text"
+    [class.is-invalid]='ngControl.touched && ngControl.invalid'
+    class='form-control'
+    [formControl]='ngControl.control'
+    placeholder="{{label}}"
+    bsDatepicker
+    [bsConfig]='bsConfig'
+    [maxDate]='maxDate'
+    >                         
+    <!-- we then need to add our validation feedback -->
+
+    <div *ngIf="ngControl.control.errors?.required"  class="invalid-feedback">{{label}} is required</div>
+
+</div>

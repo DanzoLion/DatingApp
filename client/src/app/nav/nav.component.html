@@ -28,7 +28,7 @@
      
 
 <div class="dropdown" *ngIf="(accountService.currentUser$ | async) as user" dropdown>                           <!-- angular bootstrap will be required for implementation here // dropdown added  // added: () as user-->
-  <img src="{{user.photoUrl}}" alt="{{user.username}}">       <!-- after we implement main photo in the API: user given property photoUrl and alternate of username:  -->
+  <img src="{{user.photoUrl || './assets/user.png'}}" alt="{{user.username}}">       <!-- after we implement main photo in the API: user given property photoUrl and alternate of username:  // added default || or conditional for user photo if none exists-->
   <a class="dropdown-toggle text-light ml-2" dropdownToggle>Welcome {{ user.username | titlecase }}</a> <!-- structural directive dropdownToggle added here // added interpolation {{user.username}} -->
 <div class="dropdown-menu mt-3" *dropdownMenu>                       <!-- structural directive dropdown menu added here -->
 

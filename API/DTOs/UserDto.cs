@@ -7,5 +7,7 @@ namespace API.DTOs
         public string Token { get; set; }
 
         public string PhotoUrl { get; set; }                        // added after setting main photo in API // this adds main photo image to the nav bar
+
+        public string KnownAs { get; set; }                      // added after completing datepicker we register our user knownAs
     }
 }

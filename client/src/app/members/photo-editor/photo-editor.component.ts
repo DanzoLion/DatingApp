@@ -70,8 +70,13 @@ this.uploader.onAfterAddingFile = (file) => {
 
  this.uploader.onSuccessItem = (item, response, status, headers) => {   // we then specify what we need to do after the uploader has completed 
 if (response) {                                                                                             // we check fro a response here 
-  const photo = JSON.parse(response);
+  const photo: Photo = JSON.parse(response);
   this.member.photos.push(photo);                                                         // then push our photo's into photo array
+  if (photo.isMain) {                                                                   // we add this check to see if photo is selected, if photo then select for all user, member, accountService ie everywhere
+    this.user.photoUrl = photo.url;
+    this.member.photoUrl = photo.url;
+    this.accountService.setCurrentUser(this.user);
+  }
 } 
 
 }

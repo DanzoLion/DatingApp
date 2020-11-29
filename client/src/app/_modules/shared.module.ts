@@ -5,6 +5,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { FileUploadModule } from 'ng2-file-upload';
+import {BsDatepickerModule} from 'ngx-bootstrap/datepicker';
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { FileUploadModule } from 'ng2-file-upload';
     TabsModule.forRoot(),                                        // because we are using a shared module we need to export it also as we won't be able to use it otherwise
     NgxGalleryModule,                                            // imported as we are setting up our photo gallery, we have installed: npm install@kolkov/ngx-gallery // also need to export  
     FileUploadModule,                                             // we import this after we install the file uploader component ng2
+    BsDatepickerModule.forRoot()                          // this is an angluar bootstrap module so needs to include forRoot()
   ],
 
   exports: [
@@ -26,6 +28,7 @@ import { FileUploadModule } from 'ng2-file-upload';
     TabsModule,
     NgxGalleryModule,
     FileUploadModule,
+    BsDatepickerModule,                                       // NB always remember to add as an export whenever we import
   ]
 
 

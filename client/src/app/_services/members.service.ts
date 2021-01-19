@@ -1,10 +1,14 @@
 // import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { HttpClient } from '@angular/common/http';      // HttpHeaders removed after interceptor created
+import { HttpClient, HttpParams } from '@angular/common/http';      // HttpHeaders removed after interceptor created
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { of, pipe } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { PaginatedResult } from '../_models/pagination';
+import { UserParams } from '../_modules/userParams';
+import { AccountService } from './account.service';
+import { User } from '../_models/user';
 
 /*const httpOptions = {                                                                                               // header added here as authentication is used by the endpoint users
     headers: new HttpHeaders({                                                                                // where we specify what headers we want to provide
@@ -15,29 +19,87 @@ import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class MembersService {
+export class MembersService {   // we alter our members list component to determine how we get our members list -> member-list.component.ts
   baseUrl = environment.apiUrl;
   members: Member[] = [];                          // this is for storing our server status and we create this after setting up our loading display feature // add array as empty array
+ // paginatedResult: PaginatedResult<Member[]> = new PaginatedResult<Member[]>();   // our new pagination array implementation // results will be stored here
+ memberCache = new Map();     // used to map our string output as keys to store as our cache
+ user: User;
+ userParams: UserParams;
+ 
+  constructor(private http: HttpClient, private accountService: AccountService) { 
+    this.accountService.currentUser$.pipe(take(1)).subscribe(user => {
+      this.user = user;
+      this.userParams = new UserParams(user);
+    })
+    }
 
-  constructor(private http: HttpClient) { }
+    getUserParams() {
+      return this.userParams;
+    }
 
-  getMembers()  {                                                                                           // returns observable of member and we specify type to tell it what we are receiving back from server <Member[]>
-    if (this.getMembers.length > 0) return of(this.members)       // created to check that our array define above is zero .. then return a member as an observable // client observes data // of returns 'of' an observable // the we set members after get them from API do this via .pipe()
+    setUserParams(params: UserParams) {
+      this.userParams = params;
+    }
+
+    resetUserParams() {
+      this.userParams = new UserParams(this.user);
+      return this.userParams;
+    }
+
+
+  //getMembers(page?: number, itemsPerPage?: number)  {  // returns observable of member and we specify type to tell it what we are receiving back from server <Member[]> // parameters added
+  getMembers(userParams: UserParams)  {  // returns observable of member and we specify type to tell it what we are receiving back from server <Member[]> // parameters added
+   // if (this.getMembers.length > 0) return of(this.members)       // created to check that our array define above is zero .. then return a member as an observable // client observes data // of returns 'of' an observable // the we set members after get them from API do this via .pipe() // turned off for pagination implementation
    //return this.http.get<Member[]>(this.baseUrl + 'users', httpOptions);      // enpoint is users // we also need to think about how we send up our authentication // users endpoint is protected by authentication // we need to add this as a header // httpOptions from defined header above
-    return this.http.get<Member[]>(this.baseUrl + 'users').pipe(      // httpOptions removed
-      map(members => {                                                          // map object returns the values as an observable
+   // let params = new HttpParams();
+  // console.log(Object.values(userParams).join('-'));    // our test print to console to test our userParams functionality
+  var response = this.memberCache.get(Object.values(userParams).join('-'));
+  if(response) {
+    return of(response);
+  }
+   
+    let params = this.getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
+    params = params.append('minAge', userParams.minAge.toString());
+    params = params.append('maxAge', userParams.maxAge.toString());
+    params = params.append('gender', userParams.gender);
+    params = params.append('orderBy', userParams.orderBy);
+  /*if (page !== null && itemsPerPage !== null){
+     params = params.append('pageNumber', page.toString());
+     params = params.append('pageSize', itemsPerPage.toString());
+   }*/
+      return this.getPaginatedResult<Member[]>(this.baseUrl + 'users', params)
+      .pipe(map(response => {
+        this.memberCache.set(Object.values(userParams).join('-'), response);
+        return response;
+      }))
+
+
+      //return this.newMethod(params)
+      // removed below, with pagination implementation: this was our caching code
+      /*map(members => {                                                          // map object returns the values as an observable
         this.members = members;
         return members;                                                           // returned members here are returned as an observable
-      })
-      )
+      })*/
+     // )
     }
 
 
   getMember(username: string){                                                                                         // we are explicit here to make sure we only return a string as parameter
  //   return this.http.get<Member>(this.baseUrl + 'users/' + username, httpOptions);
-    const member = this.members.find(x => x.userName === username);      // here we attempt to get the member we have inside our service ie where user may refresh their page and we don't have anything inside the page 
-    // === is JavaScript equality  // we find the member of the same username we are passing in as a parameter
-    if(member !== undefined) return of(member);         // if not undefined .. return of(member) // if we don't have member then moves onto API call below:
+    // const member = this.members.find(x => x.userName === username);      // here we attempt to get the member we have inside our service ie where user may refresh their page and we don't have anything inside the page 
+    // // === is JavaScript equality  // we find the member of the same username we are passing in as a parameter
+    // if(member !== undefined) return of(member);         // if not undefined .. return of(member) // if we don't have member then moves onto API call below:
+//console.log(this.memberCache);
+    const member = [...this.memberCache.values()]
+    .reduce((arr, elem) => arr.concat(elem.result), [])
+    .find((member: Member) => member.userName === username);
+
+    if (member){
+      return of(member);
+    }
+    //console.log(member);
+    //console.log(member);
     return this.http.get<Member>(this.baseUrl + 'users/' + username); // httpOptions removed after we have created our interceptor: jwt.interceptor.ts
   }
 
@@ -59,5 +121,28 @@ export class MembersService {
 
     deletePhoto(photoId: number) {
       return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
+    }
+
+    // --------------> moved down to here:
+
+    private getPaginatedResult<T>(url, params) {                                                                                         // created this new method ie refactor, generate new Extracted to method in class 'MemberService'
+    const paginatedResult: PaginatedResult<T> = new PaginatedResult<T>();
+    return this.http.get<T>(url, { observe: 'response', params }).pipe(
+      map(response => {
+        paginatedResult.result = response.body; // members array will be contained inside response.body
+        if (response.headers.get('Pagination') !== null) { // we then check our pagination headers here
+          paginatedResult.pagination = JSON.parse(response.headers.get('Pagination'));
+        }
+        return paginatedResult;
+      }));
+  }
+
+    private getPaginationHeaders(pageNumber: number, pageSize: number) {
+      let params = new HttpParams();
+      // if (page !== null && itemsPerPage !== null){   // can be removed as we already initialise page size and page number above, this is removed
+      params = params.append('pageNumber', pageNumber.toString());
+      params = params.append('pageSize', pageSize.toString());
+   
+      return params;
     }
 }

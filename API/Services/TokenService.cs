@@ -23,7 +23,8 @@ namespace API.Services
         {
             var claims = new List<Claim>
             {
-            new Claim(JwtRegisteredClaimNames.NameId, user.UserName)            // use the NameId to store user.UserName // to store the user name // NameId to store user name // single claim used for now
+            new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),   // added user.Id.ToString()         // use the NameId to store user.UserName // to store the user name // NameId to store user name // single claim used for now
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),   // added so we can access both user.Id & UserName
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);   // create user credentials here; takes security key and algorithm // HmacSha strongest available to sign the token

@@ -7,8 +7,8 @@
             <div class="card-body">
                 <div><strong>Location:</strong><p>{{member.city}},{{member.country}}</p></div>
                 <div><strong>Age:</strong><p>{{member.age}}</p></div>
-                <div><strong>Last Active:</strong><p>{{member.lastActive}}</p></div>
-                <div><strong>Member Since:</strong><p>{{member.created}}</p></div>
+                <div><strong>Last Active:</strong><p>{{member.lastActive | timeago}}</p></div>
+                <div><strong>Member Since:</strong><p>{{member.created | date: 'dd MMM yyyy'}}</p></div>
                 </div>
 
                 <div class="card-footer"></div>

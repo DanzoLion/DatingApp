@@ -49,7 +49,8 @@ namespace API.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),                                                                         // token is our token service, and we pass user as a parameter
-                KnownAs = user.KnownAs,                                                                                             // we add a KnownAs property to UserDto.cs                                                                            
+                KnownAs = user.KnownAs,                                                                                             // we add a KnownAs property to UserDto.cs    
+                Gender = user.Gender                                                                        
             };
         }
 
@@ -74,6 +75,7 @@ namespace API.Controllers
                 Token = _tokenService.CreateToken(user),                                                                         // token is our token service, and we pass user as a parameter              // we then need to specify config properties for user
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,                                               // this property is addd in UserDto.cs .. and contains our Main Photo // exception will occur if no photo to work with, not NULL
                 KnownAs = user.KnownAs,                                                                                             // KnownAs property added to UserDto.cs // this makes use of NavBar
+                Gender = user.Gender
             };                                                                                                                                              // hits here once the password has successfully been calculated and returns user object                   
         }
         private async Task<bool> UserExists(string username)                                                        // test if there is the same entry in our databse, if is entry we return true, if not we return false

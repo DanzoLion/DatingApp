@@ -16,9 +16,8 @@ namespace API.Extensions
         {
                 services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));            // we instruct our config  where to get our cloudinary config settings // CloudinarySettings type // we can access our "CloudinarySettings" via <CloudinarySettings> class
                 services.AddScoped<ITokenService, TokenService>();                                                                             // added interface scoped to keep alive with HTTP req. for creating Token service
-                
-                services.AddScoped<IPhotoService, PhotoService>();                              // implement this service after creating PhotoService.cs
-
+                services.AddScoped<IPhotoService, PhotoService>();                                                                  // implement this service after creating PhotoService.cs
+                services.AddScoped<LogUserActivity>();                                                                  // scoped as we want this service to be scoped to the context of the request
                 services.AddScoped<IUserRepository, UserRepository>();                                                                      // Adds user repository to AddScoped implementation // added after UserRepository.cs created
                 services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);                                                    // added service from AutoMapperProfiles.cs
                 services.AddDbContext<DataContext>(options =>                                                                               // lambda expression to pass expression as parameter

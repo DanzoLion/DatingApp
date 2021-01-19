@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;                                                 
 using Microsoft.EntityFrameworkCore;                                                        // ToListAsync() - for asynchronous threading
 using Microsoft.AspNetCore.Http;                                                             // IFormFile
 using API.Extensions;
+using API.Helpers;
 
 namespace API.Controllers {
                                                                                                                                                                                                    // [ApiController]    // removed as we now inherit from BaseApiController attributes    // attributes specified here
@@ -39,15 +40,23 @@ namespace API.Controllers {
         [HttpGet]                                                                                                                                                                                     // getting data 
                                                                                                                                                                                                             //       [AllowAnonymous]                                                                                            // for GetUsers()       // for testing/comparing two different req. we get back in PostMan          
                                                                                                                                                                                                                   //  public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()         // AppUser changed  // return the result from our get request, return result back as a list     //IEnumerable for returning collection list of type AppUser // method GetUsers()
-        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()   
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)   // added UserParams when createing PagedList + UserRepository config.   // FromQuery needs to be specified as it's a Query String Param API controller needs this attribute
         {                                                                                                                                                                                                // async added for asynchronous threading // then wrap ActionResult<> into a task for asynchronous threading
                                                                                                                                                                                                         //return await _context.Users.ToListAsync();        // variable created here to store users // specify we want to get our users from list into database // await for asynchronous threading // removed with usersRepository implementation 
                                                                                                                                                                                                         //var users = await _userRepository.GetUserAsync();               // first deposit await into users variable    // changed to single line wrapper below
                                                                                                                                                                                                       //  return Ok(await _userRepository.GetUserAsync());                                              // return users;   // we return users from endpoint // change .ToList() to ToListAsync() - for asynchronous threading    // changed to return Ok(users);
                                                                                                                                                                                                       // var users = await _userRepository.GetUserAsync();          **************** changed upon new implementation of new AutoMapper implementation ********************
                                                                                                                                                                                                     //  var usersToReturn = _mapper.Map<IEnumerable<MemberDto>>(users);          // we have access to _mapper once we create the property and inherit the class   // this is what we are mapping to in this case       // removed    
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+         userParams.CurrentUsername = user.UserName;            // get username of user; then add a check for their gender to set default gender
+        
+        if (string.IsNullOrEmpty(userParams.Gender))
+          userParams.Gender = user.Gender == "male" ? "female" : "male";            // checks if user is male or femal, if female set to male 
 
-         var users = await _userRepository.GetMembersAsync();
+         var users = await _userRepository.GetMembersAsync(userParams);                                                             // we are then able to pass userParms here once it's implemented above
+                                                                                                                                                                               // users variable then becomes type of PagedList<MemberDto> // pagination infor inside here
+        Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);   // we have access to our responside inside our controllers // we always have access to http response data
+        
         return Ok(users);
                                                                                                                                                   //  return Ok(usersToReturn);                                         // cut here  await _userRepository.GetUserAsync() and placed int var users  // changed after new AutoMapper implementation
 

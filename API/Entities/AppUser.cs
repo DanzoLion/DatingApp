@@ -24,6 +24,9 @@ namespace API.Entities
         public string Country { get; set; }
         public ICollection<Photo> Photos { get; set; }                                  // we auto generated this class from Photo -> Photo.cs  // first half of defined relationship between AppUser.cs and Photo.cs
 
+        public ICollection<UserLike> LikedByUsers { get; set; }               // users liked by other users
+        public ICollection<UserLike> LikedUsers { get; set; }                  // users that have been liked
+
 //public int GetAge()                                                       // commented out as we have a new implementation for GetMember Dto in UserControllers.cs
 //{
 //    return DateOfBirth.CalculateAge();                                            // we now have the ability to return somones age via DOB via the entity // relationship between AppUser.cs and Photo.cs = one to many relationship 1 user has many photos

@@ -31,8 +31,10 @@ export class ErrorInterceptor implements HttpInterceptor {
                     }
                   }
                   throw modalStateErrors.flat();                   // after for loop we throw modalStateErrors back to the component // will display a list of validation errors below the form // flat will flatten our array of arrys
-                } else {                                                                                // else will check if this is just a normal 400 error, rather than special case 400 error .. we two 400 errors we need to manage
-                  this.toastr.error(error.statusText, error.status);
+                } else if (typeof(error.error) === 'object') {    // else will check if this is just a normal 400 error, rather than special case 400 error .. we two 400 errors we need to manage
+                  this.toastr.error(error.statusText, error.status);  // test to see if we have an object, if it is it's an error object
+                } else {
+                  this.toastr.error(error.error, error.status);
                 }
               break;
               case 401:

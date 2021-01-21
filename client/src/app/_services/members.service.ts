@@ -123,6 +123,17 @@ export class MembersService {   // we alter our members list component to determ
       return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
     }
 
+    addLike(username: string) {
+      return this.http.post(this.baseUrl + 'likes/' + username, { });     // post requires empty { } body
+    }
+
+    getLikes(predicate: string, pageNumber, pageSize) {
+      let params = this.getPaginationHeaders(pageNumber, pageSize);
+      params = params.append('predicate', predicate)
+      //return this.http.get<Partial<Member[]>>(this.baseUrl + 'likes?predicate=' + predicate);    // will be either liked or liked by via predicate // updated: <Partial<Member[]>>
+      return this.getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params);
+    }
+
     // --------------> moved down to here:
 
     private getPaginatedResult<T>(url, params) {                                                                                         // created this new method ie refactor, generate new Extracted to method in class 'MemberService'

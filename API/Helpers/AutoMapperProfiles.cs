@@ -19,6 +19,10 @@ namespace API.Helpers
                                                                     // this is added as a dependency we need to inject so we need to add this to our ApplicationServiceExtensions.cs
             CreateMap<MemberUpdateDto, AppUser>();    // going from MemberUpdateDto, to AppUser // user .ReverseMap to swap directions
             CreateMap<RegisterDto, AppUser>();                  // maps from RegisterDto -> to AppUser          // we now don't need to manually map our properties we receive from our account controller    
+
+            CreateMap<Message, MessageDto>()     // need to implement a config becuase there is a property automap cannot retrieve for us: userPhoto
+            .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(src => src.Sender.Photos.FirstOrDefault(x => x.IsMain).Url))    // we move a few levels deep here this is the sender
+            .ForMember(dest => dest.RecipientPhotoUrl, opt => opt.MapFrom(src => src.Recipient.Photos.FirstOrDefault(x => x.IsMain).Url));  // this is the recipient // mapping from recipient url
         }
     }
 }

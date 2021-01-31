@@ -9,6 +9,7 @@ import { PaginatedResult } from '../_models/pagination';
 import { UserParams } from '../_modules/userParams';
 import { AccountService } from './account.service';
 import { User } from '../_models/user';
+import { getPaginatedResult, getPaginationHeaders } from './paginationHelper';
 
 /*const httpOptions = {                                                                                               // header added here as authentication is used by the endpoint users
     headers: new HttpHeaders({                                                                                // where we specify what headers we want to provide
@@ -59,7 +60,7 @@ export class MembersService {   // we alter our members list component to determ
     return of(response);
   }
    
-    let params = this.getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
+    let params = getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
     params = params.append('minAge', userParams.minAge.toString());
     params = params.append('maxAge', userParams.maxAge.toString());
     params = params.append('gender', userParams.gender);
@@ -68,7 +69,7 @@ export class MembersService {   // we alter our members list component to determ
      params = params.append('pageNumber', page.toString());
      params = params.append('pageSize', itemsPerPage.toString());
    }*/
-      return this.getPaginatedResult<Member[]>(this.baseUrl + 'users', params)
+      return getPaginatedResult<Member[]>(this.baseUrl + 'users', params, this.http)
       .pipe(map(response => {
         this.memberCache.set(Object.values(userParams).join('-'), response);
         return response;
@@ -128,32 +129,13 @@ export class MembersService {   // we alter our members list component to determ
     }
 
     getLikes(predicate: string, pageNumber, pageSize) {
-      let params = this.getPaginationHeaders(pageNumber, pageSize);
+      let params = getPaginationHeaders(pageNumber, pageSize);
       params = params.append('predicate', predicate)
       //return this.http.get<Partial<Member[]>>(this.baseUrl + 'likes?predicate=' + predicate);    // will be either liked or liked by via predicate // updated: <Partial<Member[]>>
-      return this.getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params);
+      return getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params, this.http);
     }
 
     // --------------> moved down to here:
 
-    private getPaginatedResult<T>(url, params) {                                                                                         // created this new method ie refactor, generate new Extracted to method in class 'MemberService'
-    const paginatedResult: PaginatedResult<T> = new PaginatedResult<T>();
-    return this.http.get<T>(url, { observe: 'response', params }).pipe(
-      map(response => {
-        paginatedResult.result = response.body; // members array will be contained inside response.body
-        if (response.headers.get('Pagination') !== null) { // we then check our pagination headers here
-          paginatedResult.pagination = JSON.parse(response.headers.get('Pagination'));
-        }
-        return paginatedResult;
-      }));
-  }
 
-    private getPaginationHeaders(pageNumber: number, pageSize: number) {
-      let params = new HttpParams();
-      // if (page !== null && itemsPerPage !== null){   // can be removed as we already initialise page size and page number above, this is removed
-      params = params.append('pageNumber', pageNumber.toString());
-      params = params.append('pageSize', pageSize.toString());
-   
-      return params;
-    }
 }

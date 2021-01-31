@@ -11,6 +11,7 @@ import { MemberListComponent } from './members/member-list/member-list.component
 import { MessagesComponent } from './messages/messages.component';
 import { AuthGuard } from './_guards/auth.guard';
 import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
+import { MemberDetailedResolver } from './_resolvers/member-detailed.resolver';
 
 const routes: Routes = [
   {path: "", component: HomeComponent},                                                                                         // empty string represents the path :4200; that is our home component
@@ -22,7 +23,7 @@ const routes: Routes = [
     children: [                                                                                                                             // will be an array of our route // all of our children are now covered by our AuthGuard above
       //{path: "members", component: MemberListComponent}, // removed:  canActivate: [AuthGuard]},           // specify AuthGuard array [1 member] - after completing authGuard // route guard now active
       {path: "members", component: MemberListComponent,},           // specify AuthGuard array [1 member] - after completing authGuard // route guard now active
-      {path: "members/:username", component: MemberDetailComponent,},                                              // changed id to username to decide which route the have gone to we access the username from route parameters
+      {path: "members/:username", component: MemberDetailComponent, resolve: {member: MemberDetailedResolver}},    // changed id to username to decide which route the have gone to we access the username from route parameters
       {path: "member/edit", component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard],},           // added after generating ng g c member-edit component for routing // added new guard [PreventUnsavedChangesGuard] after creating prevent-unsaved-changes.guard.ts
     // {path: "members/:id", component: MemberDetailComponent},     // is the id of our member
       {path: "lists", component: ListsComponent,},                                                                         // is the id of our member

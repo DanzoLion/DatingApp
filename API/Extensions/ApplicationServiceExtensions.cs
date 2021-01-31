@@ -19,6 +19,7 @@ namespace API.Extensions
                 services.AddScoped<IPhotoService, PhotoService>();                                                                  // implement this service after creating PhotoService.cs
                 services.AddScoped<LogUserActivity>();                                                                  // scoped as we want this service to be scoped to the context of the request
                 services.AddScoped<ILikesRepository, LikesRepository>();                            // likes repository is the implementation class
+                services.AddScoped<IMessageRepository, MessageRepository>();                // implemented after we create the infrastructure for Message.cs / MessageRepository.cs / MessageDto.cs etc
                 services.AddScoped<IUserRepository, UserRepository>();                                                                      // Adds user repository to AddScoped implementation // added after UserRepository.cs created
                 services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);                                                    // added service from AutoMapperProfiles.cs
                 services.AddDbContext<DataContext>(options =>                                                                               // lambda expression to pass expression as parameter

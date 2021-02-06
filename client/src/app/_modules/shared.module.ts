@@ -9,6 +9,7 @@ import {BsDatepickerModule} from 'ngx-bootstrap/datepicker';
 import {PaginationModule} from 'ngx-bootstrap/pagination';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { TimeagoModule } from 'ngx-timeago';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { TimeagoModule } from 'ngx-timeago';
     BsDatepickerModule.forRoot(),                          // this is an angluar bootstrap module so needs to include forRoot()
     PaginationModule.forRoot(),
     ButtonsModule.forRoot(),                               // buttons module
-    TimeagoModule.forRoot()                         //time ago functionality
+    TimeagoModule.forRoot(),                         //time ago functionality
+    ModalModule.forRoot(),                                  // added for modal implementation        
   ],
 
   exports: [
@@ -37,7 +39,8 @@ import { TimeagoModule } from 'ngx-timeago';
     BsDatepickerModule,                                       // NB always remember to add as an export whenever we import
     PaginationModule,
     ButtonsModule,
-    TimeagoModule
+    TimeagoModule,
+    ModalModule,
   ]
 
 

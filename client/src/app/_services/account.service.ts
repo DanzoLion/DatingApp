@@ -21,14 +21,14 @@ export class AccountService {
   login(model: any)         // this method receives credentials from login form from NavBar
   {                                                // returns credentials // model contains username and password we are sending up to the server // completes basic structure of a service
     return this.http.post(this.baseUrl + 'account/login', model).pipe(  // everything in here is an rxjs operator ..
-map((response: User) => {            // changed response to User after creating ts interface
-  const user = response;                  // we want our user retrieved from the response
-  if (user) {
-  //  localStorage.setItem('user', JSON.stringify(user));   // populate received  user in local storage within browser, then pass user as a string  // REPLACED by: this.setCurrentUser(user); 
-  //  this.currentUserSource.next(user); // where we set our current user from the API // replaced with: this.setCurrentUser(user);
-  this.setCurrentUser(user);
-  }
-})
+    map((response: User) => {            // changed response to User after creating ts interface
+      const user = response;                  // we want our user retrieved from the response
+    if (user) {
+                                                          //  localStorage.setItem('user', JSON.stringify(user));   // populate received  user in local storage within browser, then pass user as a string  // REPLACED by: this.setCurrentUser(user); 
+                                    //  this.currentUserSource.next(user); // where we set our current user from the API // replaced with: this.setCurrentUser(user);
+    this.setCurrentUser(user);
+      }
+    })
     )      
   }
 
@@ -46,6 +46,9 @@ map((response: User) => {            // changed response to User after creating 
   }
 
 setCurrentUser(user: User){                     // helper method implemented here                     // this method sets our current user
+  user.roles = [];
+  const roles = this.getDecodedToken(user.token).role;                // role is the name of the property even if there is more than one       
+  Array.isArray(roles) ? user.roles = roles : user.roles.push(roles); // we check if role is an arry [many] or if not : then user.roles.push to (roles) array ¬ and then we set item as normal below
   localStorage.setItem("user", JSON.stringify(user));    // moved from register above to setCurrentUser
   this.currentUserSource.next(user);      // we set our current user source here
 }          
@@ -54,4 +57,9 @@ logout() {
   localStorage.removeItem('user');
   this.currentUserSource.next(null);
 }
+
+getDecodedToken(token) {
+  return JSON.parse(atob(token.split('.')[1]));               // we reference the middle part of the token here, ie the PayLoad // implementation of user roles and retrieving token data
 }
+}
+

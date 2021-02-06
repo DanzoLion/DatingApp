@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Data;                                                         // <DataContext>
+using API.Entities;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;                    // MigrateAync()
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection; // CreateScope()
@@ -24,8 +26,10 @@ namespace API
             try         // we need this because we are outside of our global error exception handling boundary
             {
                 var context = services.GetRequiredService<DataContext>();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
                 await context.Database.MigrateAsync();  // migrates our database here // applies any pending migrations for the context to database // creates database if it does not already exist ie > dotnet ef update
-                await Seed.SeedUsers(context);              // if our database is dropped it will re-create the database if it is dropped
+                await Seed.SeedUsers(userManager, roleManager);              // if our database is dropped it will re-create the database if it is dropped  // user/context replaced with userManger for identity manager
             }
             catch(Exception ex)            // catches the excepotions that occur during the seeding of our data
             {

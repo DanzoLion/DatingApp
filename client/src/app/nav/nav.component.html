@@ -16,6 +16,9 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a>
           </li>
+          <li *appHasRole='["Admin", "Moderator"]' class="nav-item">
+            <a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin</a>
+          </li>
         </ng-container>
         
         <li class="nav-item">
@@ -29,7 +32,7 @@
 
 <div class="dropdown" *ngIf="(accountService.currentUser$ | async) as user" dropdown>                           <!-- angular bootstrap will be required for implementation here // dropdown added  // added: () as user-->
   <img src="{{user.photoUrl || './assets/user.png'}}" alt="{{user.username}}">       <!-- after we implement main photo in the API: user given property photoUrl and alternate of username:  // added default || or conditional for user photo if none exists-->
-  <a class="dropdown-toggle text-light ml-2" dropdownToggle>Welcome {{ user.knownAs | titlecase }}</a> <!-- structural directive dropdownToggle added here // added interpolation {{user.username}} // changed  user.username to user.knownAs -->
+  <a class="dropdown-toggle text-light ml-2" dropdownToggle>Welcome {{ user.knownAs || user.username | titlecase }}</a> <!-- structural directive dropdownToggle added here // added interpolation {{user.username}} // changed  user.username to user.knownAs || added for admin name-->
 <div class="dropdown-menu mt-4" *dropdownMenu>                       <!-- structural directive dropdown menu added here -->
 
   <!--<a class="dropdown-item">Edit Profile</a>  addeed when we created edit profile component to finish the link--> 

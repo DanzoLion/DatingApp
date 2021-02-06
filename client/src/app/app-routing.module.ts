@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { TestErrorsComponent } from './errors/test-errors/test-errors.component';
@@ -9,6 +10,7 @@ import { MemberDetailComponent } from './members/member-detail/member-detail.com
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberListComponent } from './members/member-list/member-list.component';
 import { MessagesComponent } from './messages/messages.component';
+import { AdminGuard } from './_guards/admin.guard';
 import { AuthGuard } from './_guards/auth.guard';
 import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
 import { MemberDetailedResolver } from './_resolvers/member-detailed.resolver';
@@ -16,7 +18,7 @@ import { MemberDetailedResolver } from './_resolvers/member-detailed.resolver';
 const routes: Routes = [
   {path: "", component: HomeComponent},                                                                                         // empty string represents the path :4200; that is our home component
 
-  {
+  {                                                            // these guards are accumulators to if we fail at any point the route will not be successful
     path:"", 
     runGuardsAndResolvers: "always",                                                                                          // decides when guards and resolvers will be run
     canActivate: [AuthGuard],                                                                                                       // protects children
@@ -28,6 +30,7 @@ const routes: Routes = [
     // {path: "members/:id", component: MemberDetailComponent},     // is the id of our member
       {path: "lists", component: ListsComponent,},                                                                         // is the id of our member
       {path: "messages", component: MessagesComponent,},                                              // all these items moved to children array/list
+      {path: "admin", component: AdminPanelComponent, canActivate:[AdminGuard]},                                              // admin panel route
     ]
   },
      {path: "errors", component: TestErrorsComponent},                                                     // we add TestErrorsComponent after we have created the test-errors components.ts + html files from command line and coded these

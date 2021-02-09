@@ -5,6 +5,9 @@
     <div class="card">
             <img src="{{member.photoUrl || './assets/user.png' }}" alt="{{member.knownAs}}" class="card-img-top img-thumbnail">         <!-- || used here as an alternative so users can upload profile/photo later on-->
             <div class="card-body">
+                <div class="mb-2" *ngIf="(presence.onlineUsers$ | async).includes(member.userName)">
+                    <i class="fa fa-user-circle text-success"></i> Online Now
+                </div>
                 <div><strong>Location:</strong><p>{{member.city}},{{member.country}}</p></div>
                 <div><strong>Age:</strong><p>{{member.age}}</p></div>
                 <div><strong>Last Active:</strong><p>{{member.lastActive | timeago}}</p></div>
@@ -27,11 +30,9 @@
             <tab heading='Photos' (selectTab)="onTabActivated($event)"><ngx-gallery [options]="galleryOptions" [images]="galleryImages" style="display: inline-block; margin-bottom: 20px;"></ngx-gallery></tab> <!--added once we have coded member-detail.component.ts-->
             <tab heading='Messages' (selectTab)="onTabActivated($event)">
                 
-            <app-member-messages [messages]="messages" [username]="member.userName"> </app-member-messages>    
+           <!-- <app-member-messages [messages]="messages" [username]="member.userName"> </app-member-messages>   we can remove this as we are now able to directly access messages within app-member-messages-->   
+            <app-member-messages [username]="member.userName"> </app-member-messages>    
             </tab>
-          
-
         </tabset>
-
     </div>
 </div>

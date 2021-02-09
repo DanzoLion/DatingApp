@@ -4,6 +4,7 @@ import { ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators'; // use within pipe() rxjs operator
 import { environment } from 'src/environments/environment';
 import { User } from '../_models/user'; // response: User
+import { PresenceService } from './presence.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class AccountService {
   private currentUserSource = new ReplaySubject<User>(1);     // observable created here to store our user in // ReplaySubject stores values inside here and emits last value subscribed // or number of values we want to emit
   currentUser$ = this.currentUserSource.asObservable();           // we have access to this property and allows us to set users Main image in the NavBar  // we now set this in nav.component.html
 
-  constructor(private http: HttpClient) { }                   // we inject our http client into our service here 
+  constructor(private http: HttpClient, private presence: PresenceService) { }                   // we inject our http client into our service here  // PresenceService implemented with SignalR
 
   login(model: any)         // this method receives credentials from login form from NavBar
   {                                                // returns credentials // model contains username and password we are sending up to the server // completes basic structure of a service
@@ -27,6 +28,7 @@ export class AccountService {
                                                           //  localStorage.setItem('user', JSON.stringify(user));   // populate received  user in local storage within browser, then pass user as a string  // REPLACED by: this.setCurrentUser(user); 
                                     //  this.currentUserSource.next(user); // where we set our current user from the API // replaced with: this.setCurrentUser(user);
     this.setCurrentUser(user);
+    this.presence.createHubConnection(user);   // SignalR implentation
       }
     })
     )      
@@ -39,6 +41,7 @@ export class AccountService {
    //       localStorage.setItem("user", JSON.stringify(user));       // removed and added to setCurrentUser method
   //        this.currentUserSource.next(user);            // replaced with: this.setCurrentUser(user);
       this.setCurrentUser(user);          // when we 
+      this.presence.createHubConnection(user);   // SignalR implentation
         }
        //  return user;
       })
@@ -56,6 +59,7 @@ setCurrentUser(user: User){                     // helper method implemented her
 logout() {
   localStorage.removeItem('user');
   this.currentUserSource.next(null);
+  this.presence.stopHubConnection();         // SignalR implementation
 }
 
 getDecodedToken(token) {

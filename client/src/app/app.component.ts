@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { User } from './_models/user';
 import { AccountService } from './_services/account.service';
+import { PresenceService } from './_services/presence.service';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ export class AppComponent  implements OnInit{
   title = 'The Dating App';
   users: any;
 
-  constructor(/*private http: HttpClient,*/ private accountService: AccountService) {}                  // we bring in our App accountService // functionality removed and added to home.component.ts
+  constructor(/*private http: HttpClient,*/ private accountService: AccountService, private presence: PresenceService) {}  // we bring in our App accountService // functionality removed and added to home.component.ts // PresenceService added for SignalR
   
   ngOnInit() {
                                                                                                                                                   //remved with getUsers() // this.getUsers();
@@ -21,7 +22,12 @@ export class AppComponent  implements OnInit{
 
   setCurrentUser(){
     const user: User = JSON.parse(localStorage.getItem('user'));                                          // .parse() is used to remove the object from its stringified form // access user from localStorage
-    this.accountService.setCurrentUser(user);
+    if (user) {
+      this.accountService.setCurrentUser(user);
+      this.presence.createHubConnection(user);                                                              // added for SignalR implementation
+    }
+    
+    // this.accountService.setCurrentUser(user);
   }
 
 /*getUsers() {

@@ -22,7 +22,9 @@ namespace API.Data
   //      public DbSet<AppUser> Users { get; set; } // removed with IdentityDbContext installed     // takes the type of class we want to create a Db for // Users is the name of our Db table
                                                                                                                                                 // we then need to add this configuration to our startup class so we inject data context class into our application
     public DbSet<UserLike> Likes { get; set; }                             // our liked users for storing in DB
-    public DbSet<Message> Messages { get; set; }                        
+    public DbSet<Message> Messages { get; set; }                    
+    public DbSet<Group> Groups {get; set;}           // these are implemented for tracking messages
+    public DbSet<Connection> Connections {get; set;}           // these are implemented for tracking messages
 
     // we then need to override a method inside DB context so that we can configure our entities: we use protected
    protected override void OnModelCreating(ModelBuilder builder){    // this is the method we are overriding

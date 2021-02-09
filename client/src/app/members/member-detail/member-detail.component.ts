@@ -1,12 +1,16 @@
 import { query } from '@angular/animations';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';                                                                 // ActivatedRoute
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';                                                                 // ActivatedRoute
 import { NgxGalleryAnimation, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
+import { take } from 'rxjs/operators';
 import { Member } from 'src/app/_models/member';
 import { Message } from 'src/app/_models/message';
+import { User } from 'src/app/_models/user';
+import { AccountService } from 'src/app/_services/account.service';
 import { MembersService } from 'src/app/_services/members.service';
 import { MessageService } from 'src/app/_services/message.service';
+import { PresenceService } from 'src/app/_services/presence.service';
 
 
 @Component({
@@ -14,15 +18,22 @@ import { MessageService } from 'src/app/_services/message.service';
   templateUrl: './member-detail.component.html',
   styleUrls: ['./member-detail.component.css']
 })
-export class MemberDetailComponent implements OnInit {
+export class MemberDetailComponent implements OnInit, OnDestroy{                    // OnDestroy stops connection if user moves away from hub connection completely
   @ViewChild('memberTabs', {static: true}) memberTabs: TabsetComponent;                          // accessed member-detail.component.html        <tabset class="member-tabset" #memberTabs>
   member: Member;
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
   activeTab: TabDirective;
   messages: Message[] = [];
+  user: User;                                                         // this property to deal with receiving messages
 
-  constructor(private memberService: MembersService, private route: ActivatedRoute, private messageService: MessageService) { }            // private route: ActivatedRoute brings in the selected user from Angular Router  // injected member service
+  //constructor(private memberService: MembersService, private route: ActivatedRoute, private messageService: MessageService) { }            // private route: ActivatedRoute brings in the selected user from Angular Router  // injected member service
+  constructor(public presence: PresenceService, private route: ActivatedRoute, private messageService: MessageService, private accountService: AccountService, private router: Router) {
+    this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.user = user);   // this gives access to our current user
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;   // to control the routes of our users so the message service can update in a more controlled way
+   }            // private route: ActivatedRoute brings in the selected user from Angular Router  // injected member service // AccountService to deal with messaging
+  
+
 
   ngOnInit(): void {                                                               // -> we go to our API and retrieve send our member back and Angular has already loaded member-detail.component.html
     //this.loadMember();
@@ -83,8 +94,14 @@ export class MemberDetailComponent implements OnInit {
   onTabActivated(data: TabDirective){
     this.activeTab = data;
     if(this.activeTab.heading === 'Messages' && this.messages.length === 0){      // implements re-use of messages instead of re-loading messages
-      this.loadMessages();
-
+     // this.loadMessages();
+      this.messageService.createHubConnection(this.user, this.member.userName);
+    } else {                                                                                                                  // disconnects if user moves away from the users tab
+      this.messageService.stopHubConnection();
     }
+  }
+
+  ngOnDestroy(): void {                                                          // OnDestroy stops connection if user moves away from hub connection completely
+    this.messageService.stopHubConnection();                          // replaced default error message with stopHubConnection()    // after implementing this we need to go to message.service.ts to adapt for disconneciton issues
   }
 }

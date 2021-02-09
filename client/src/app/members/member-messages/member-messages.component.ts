@@ -16,16 +16,17 @@ export class MemberMessagesComponent implements OnInit {
 @Input() username: string;
 messageContent: string;
 
- // constructor( private messageService: MessageService) { }
-  constructor(private messageService: MessageService ) { }
+ // constructor( private messageService: MessageService) { }                            // we create an async method so we can subscribe to the messages
+  constructor(public messageService: MessageService ) { }
 
   ngOnInit(): void {
 //    this.loadMessages();
   }
 
   sendMessage(){
-    this.messageService.sendMessage(this.username, this.messageContent).subscribe(message =>{
-      this.messages.push(message);
+    this.messageService.sendMessage(this.username, this.messageContent).then(() =>{
+    //this.messageService.sendMessage(this.username, this.messageContent).subscribe(message =>{   // we don't subscribe because this is now a promise not an objservable
+     // this.messages.push(message);      // removed after message refactor // we instead recieve this from SignalR hub
       this.messageForm.reset();
     })
   }

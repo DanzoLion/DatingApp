@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Transactions;
@@ -36,6 +37,22 @@ namespace API.Extensions
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"])),
                         ValidateIssuer = false,                                     // additional flags for best practice implementation        // issuer of token is API server
                         ValidateAudience = false,                               // audience is angular application
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];    // allows client to send up token as a query string  // access_token is a key
+                            var path = context.HttpContext.Request.Path;
+
+                            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))           // checks to see if we have an access token
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
                     };
                 });
 

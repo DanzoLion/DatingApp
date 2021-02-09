@@ -13,7 +13,11 @@
 </div>
     
         <div class="card-body p-1">                                                                                                                                         <!-- padding added around the card -->
-            <h6 class="card-title text-center mb-1"><i class="fa fa-user mr-2"></i>                                                                     <!-- fa is font awesome -->
+            <h6 class="card-title text-center mb-1">
+                <span [class.is-online]="(presence.onlineUsers$ | async).includes(member.userName)">                                    <!-- applies the span if the user is online -->
+                    <i class="fa fa-user mr-2"></i>                                                                     <!-- fa is font awesome -->
+                </span>
+                
                 {{member.knownAs}}, {{member.age}}
             </h6>
                 <p class="card-text text-muted text-center">{{member.city}}</p>

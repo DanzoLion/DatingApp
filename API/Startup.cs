@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;                // installed
 using Microsoft.IdentityModel.Tokens;                                          // TokenValidationParameters
 using API.Extensions;                                                       // AddAppicationServices class we created earlier to manage our static extension method
 using API.Middleware;                                                   //            app.UseMiddleware<ExceptionMiddleware>();
+using API.SignalR;
 
 namespace API
 {
@@ -40,11 +41,12 @@ namespace API
             services.AddControllers();
             services.AddCors();                                                                                                                                      // we add this method to allow CORS communication between different origin ports
             services.AddIdentityServices(_config);                                                                                                        // after refactor, our services are now all contained inside this class
+            services.AddSignalR();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-            });
+            // services.AddSwaggerGen(c =>
+            // {
+            //     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+            // });
         }
                                                                                                                                                                                  // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -61,12 +63,15 @@ namespace API
 
             app.UseHttpsRedirection();                                                                                                                              // from http to https endpoint if entering on http
             app.UseRouting();                                                                                                                                              // our router to route from url to controller
-            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));            // acts as middleware to allow CORS routing of differing originating ports // x is our implented CORS policy
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://localhost:4200"));            // acts as middleware to allow CORS routing of differing originating ports // x is our implented CORS policy // allow credentials with SignalR implementation
             app.UseAuthentication();                                                                                                                                 // after we implement our configuration for middleware authentication
             app.UseAuthorization();                                                                                                                                      // authorisation implementation
+            
             app.UseEndpoints(endpoints =>                                                                                                                    // middleware to use endpoints
             {
                 endpoints.MapControllers();                                                                                                                         // endpoint to map controllers // looks inside controllers to see what controllers are available // weatherforecast controller
+                endpoints.MapHub<PresenceHub>("hubs/presence");                         // the route this hub will be accessed from
+                endpoints.MapHub<MessageHub>("hubs/message");                         // this hub added for MessageHub.cs for realtime message implementation
             });
         }
     }

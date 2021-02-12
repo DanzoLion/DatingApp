@@ -1,15 +1,19 @@
-﻿using System.Data;
-using System.Net.Sockets;
-using System.ComponentModel.DataAnnotations;
+﻿// using System.Data;
+// using System.Net.Sockets;
+// using System.ComponentModel.DataAnnotations;
 using API.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Threading.Tasks;
+// using System;
+// using System.Collections.Generic;
+// using System.Data.Common;
+// using System.Linq;
+// using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using System;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace API.Data
 {
@@ -67,7 +71,50 @@ builder.Entity<Message>() // this is the other side of the relationship
   .WithMany(m => m.MessagesSent) 
   .OnDelete(DeleteBehavior.Restrict); 
 
+  builder.ApplyUtcDateTimeConverter();  // needs to come after entity config and is added when UtcDateAnnotation class is added below  // ensures all our UTC time is in UTC dateFormat
 
    }
-    }                                                                                                                                                       
+}            
+public static class UtcDateAnnotation       // added to fix missing Z or unformatted DateTime from Utc that is extracted from our Database
+{
+  private const String IsUtcAnnotation = "IsUtc";
+  private static readonly ValueConverter<DateTime, DateTime> UtcConverter =
+    new ValueConverter<DateTime, DateTime>(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+  private static readonly ValueConverter<DateTime?, DateTime?> UtcNullableConverter =
+    new ValueConverter<DateTime?, DateTime?>(v => v, v => v == null ? v : DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
+
+  public static PropertyBuilder<TProperty> IsUtc<TProperty>(this PropertyBuilder<TProperty> builder, Boolean isUtc = true) =>
+    builder.HasAnnotation(IsUtcAnnotation, isUtc);
+
+  public static Boolean IsUtc(this IMutableProperty property) =>
+    ((Boolean?)property.FindAnnotation(IsUtcAnnotation)?.Value) ?? true;
+
+  /// <summary>
+  /// Make sure this is called after configuring all your entities.
+  /// </summary>
+  public static void ApplyUtcDateTimeConverter(this ModelBuilder builder)
+  {
+    foreach (var entityType in builder.Model.GetEntityTypes())
+    {
+      foreach (var property in entityType.GetProperties())
+      {
+        if (!property.IsUtc())
+        {
+          continue;
+        }
+
+        if (property.ClrType == typeof(DateTime))
+        {
+          property.SetValueConverter(UtcConverter);
+        }
+
+        if (property.ClrType == typeof(DateTime?))
+        {
+          property.SetValueConverter(UtcNullableConverter);
+        }
+      }
+    }
+  }
+}                                                                                                                                           
 }

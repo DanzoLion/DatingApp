@@ -24,7 +24,7 @@ export class AppComponent  implements OnInit{
     const user: User = JSON.parse(localStorage.getItem('user'));                                          // .parse() is used to remove the object from its stringified form // access user from localStorage
     if (user) {
       this.accountService.setCurrentUser(user);
-      this.presence.createHubConnection(user);                                                              // added for SignalR implementation
+      this.presence.createHubConnection(user);                                                              // added for SignalR implementation   // provides access to JWT Token
     }
     
     // this.accountService.setCurrentUser(user);

@@ -39,6 +39,7 @@ export class MessageService {
         this.messageThreadSource.next([...messages, message])   // spread operator that creates a new array to populate our message subject // mutation does not take place, rather replacement does
       })
     })
+  
 
     this.hubConnection.on('UpdatedGroup', (group: Group) => {
       if (group.connections.some(x => x.username === otherUsername)) {

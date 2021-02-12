@@ -16,9 +16,9 @@ export class PresenceService {
   private onlineUsersSource = new BehaviorSubject<string[]>([]);            // initialised to empty array   // behaviour subject as a subscriber 
   onlineUsers$ = this.onlineUsersSource.asObservable();                                             // $ dollar indicates observable
 
-  constructor(private toastr: ToastrService, private router: Router) { }
+  constructor(private toastr: ToastrService, private router: Router) { }  
 
-  createHubConnection(user: User){
+  createHubConnection(user: User){                                                          // this takes care of creating the hub connection
     this.hubConnection = new HubConnectionBuilder()
     .withUrl(this.hubUrl + 'presence', {
       accessTokenFactory: () => user.token
@@ -26,13 +26,13 @@ export class PresenceService {
     .withAutomaticReconnect()
     .build()
 
-    this.hubConnection
+    this.hubConnection                                                                          // starts connection
     .start()
     .catch(error => console.log(error));
 
-    this.hubConnection.on('UserIsOnline', username => {
+    this.hubConnection.on('UserIsOnline', username => {                   // listens for server events, ie user online or offline
       //this.toastr.info(username + ' has connected');                                                 // adjustment to improve notification
-      this.onlineUsers$.pipe(take(1)).subscribe(usernames => {this.onlineUsersSource.next([...usernames, username])   // we are avoiding mutation here // we take in a list of usernames => 
+      this.onlineUsers$.pipe(take(1)).subscribe(usernames => {this.onlineUsersSource.next([...usernames, username])  // we are avoiding mutation here // we take in a list of usernames => 
       })
     })
 

@@ -25,7 +25,7 @@ namespace API.Helpers
             .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(src => src.Sender.Photos.FirstOrDefault(x => x.IsMain).Url))    // we move a few levels deep here this is the sender
             .ForMember(dest => dest.RecipientPhotoUrl, opt => opt.MapFrom(src => src.Recipient.Photos.FirstOrDefault(x => x.IsMain).Url));  // this is the recipient // mapping from recipient url
 
-            CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));  // this will adjust our DateTime client and add a 'Z' to inform of standardised UTC date format
+       //     CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));  // this will adjust our DateTime client and add a 'Z' to inform of standardised UTC date format // removed with UtcDateAnnotation
         }
     }
 }

@@ -26,7 +26,7 @@ namespace API.Extensions
                 services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);                                                    // added service from AutoMapperProfiles.cs
                 services.AddDbContext<DataContext>(options =>                                                                               // lambda expression to pass expression as parameter
             {
-                options.UseSqlite(config.GetConnectionString("DefaultConnection"));                                            // connection string is what we are passing to our sql database as a connection string
+                options.UseNpgsql(config.GetConnectionString("DefaultConnection"));                                            // connection string is what we are passing to our sql database as a connection string
             });
 
             return services;                                                                        // our services to be returned                                                                                                                                         

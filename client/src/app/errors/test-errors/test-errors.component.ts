@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-test-errors',
@@ -7,7 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./test-errors.component.css']
 })
 export class TestErrorsComponent implements OnInit {
-  baseUrl = 'https://localhost:5001/api/';
+  //baseUrl = 'https://localhost:5001/api/';
+  baseUrl = environment.apiUrl;                         // changed for deployment
   validationErrors: string[] = [];                                                                 // the type of this property will be string array // and initialise to an empty array
 
   constructor(private http: HttpClient) { }                                        // http service so we can test our error responses from API

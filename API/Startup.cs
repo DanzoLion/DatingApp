@@ -66,12 +66,16 @@ namespace API
             app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://localhost:4200"));            // acts as middleware to allow CORS routing of differing originating ports // x is our implented CORS policy // allow credentials with SignalR implementation
             app.UseAuthentication();                                                                                                                                 // after we implement our configuration for middleware authentication
             app.UseAuthorization();                                                                                                                                      // authorisation implementation
+
+            app.UseDefaultFiles();                                          // this method is used for deployment/publishing
+            app.UseStaticFiles();                                               // this method is used for deployment/publishing
             
             app.UseEndpoints(endpoints =>                                                                                                                    // middleware to use endpoints
             {
                 endpoints.MapControllers();                                                                                                                         // endpoint to map controllers // looks inside controllers to see what controllers are available // weatherforecast controller
                 endpoints.MapHub<PresenceHub>("hubs/presence");                         // the route this hub will be accessed from
                 endpoints.MapHub<MessageHub>("hubs/message");                         // this hub added for MessageHub.cs for realtime message implementation
+                endpoints.MapFallbackToController("Index", "Fallback");                     // instructs our FallbackController to initiate index() as the fallback route/url
             });
         }
     }

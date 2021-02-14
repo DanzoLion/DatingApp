@@ -16,6 +16,7 @@ export class MemberMessagesComponent implements OnInit {
 @Input() messages: Message[];
 @Input() username: string;
 messageContent: string;
+loading = false;
 
  // constructor( private messageService: MessageService) { }                            // we create an async method so we can subscribe to the messages
   constructor(public messageService: MessageService ) { }
@@ -25,10 +26,11 @@ messageContent: string;
   }
 
   sendMessage(){
+    this.loading = true;
     this.messageService.sendMessage(this.username, this.messageContent).then(() =>{
     //this.messageService.sendMessage(this.username, this.messageContent).subscribe(message =>{   // we don't subscribe because this is now a promise not an objservable
      // this.messages.push(message);      // removed after message refactor // we instead recieve this from SignalR hub
       this.messageForm.reset();
-    })
+    }).finally(() => this.loading = false);
   }
 }

@@ -1,12 +1,13 @@
 <div class="card">
-    <div class="card-body">
+    <div class="card-body"
+    #scrollMe style="overflow: scroll; height: 535px;" 
+        [scrollTop]="scrollMe.scrollHeight">
         <!-- <div *ngIf="messages?.length === 0"> -->
         <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
             No messages just yet.. say "hi" by using the message box below
         </div>
 
-        <ul #scrollMe style="overflow: scroll; height: 480px;" 
-        [scrollTop]="scrollMe.scrollHeight"
+        <ul 
         *ngIf="(messageService.messageThread$ | async).length > 0" class="chat">
             <li *ngFor="let message of (messageService.messageThread$ | async)">    <!-- refactored to get messages here -->
                 <div>
@@ -33,7 +34,8 @@
         <div class="input-group">
             <input name="messageContent" required [(ngModel)]='messageContent' type="text" class="form-control input-sm" placeholder="Send a private message">
             <div class="input-group-append">
-                <button [disabled]="!messageForm.valid" class="btn btn-primary" type="submit">SEND</button>
+                <button [disabled]="!messageForm.valid || loading" class="btn btn-primary" type="submit">SEND</button>
+                <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
             </div>
         </div>
     </form>
